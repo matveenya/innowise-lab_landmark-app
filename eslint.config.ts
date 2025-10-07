@@ -15,8 +15,8 @@ export default defineConfig([
       globals: globals.browser 
     } 
   },
-  tseslint.configs.recommended,
-  pluginVue.configs["flat/essential"],
+  ...tseslint.configs.recommended,
+  ...pluginVue.configs["flat/essential"],
   { 
     files: ["**/*.vue"], 
     languageOptions: { 
@@ -34,7 +34,8 @@ export default defineConfig([
       'prettier/prettier': 'error',
       'no-console': 'warn',
       'no-unused-vars': 'warn',
-      'prefer-const': 'error'
+      'prefer-const': 'error',
+      'vue/multi-word-component-names': 'off'
     }
   }
 ]);
