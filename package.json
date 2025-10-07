@@ -10,14 +10,15 @@
     "lint": "eslint src/ ",
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write src/",
-    "prepare": "husky",
+    "prepare": "husky && husky install",
     "lint:staged": "lint-staged"
   },
   "lint-staged": {
     "src/**/*.{js,ts,vue}": [
       "eslint --fix",
       "prettier --write"
-    ]
+    ],
+    "*.js": "eslint --cache --fix"
   },
   "dependencies": {
     "firebase": "^12.3.0",
