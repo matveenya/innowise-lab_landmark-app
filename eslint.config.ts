@@ -3,6 +3,7 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 import pluginVue from "eslint-plugin-vue";
 import prettier from "eslint-config-prettier";
+import pluginPrettier from "eslint-plugin-prettier";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
@@ -26,6 +27,9 @@ export default defineConfig([
   },
   prettier,
   {
+    plugins: {
+      prettier: pluginPrettier
+    },
     rules: {
       'prettier/prettier': 'error',
       'no-console': 'warn',
