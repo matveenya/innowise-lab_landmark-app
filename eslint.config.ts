@@ -15,8 +15,8 @@ export default defineConfig([
       globals: globals.browser 
     } 
   },
-  ...tseslint.configs.recommended,
-  ...pluginVue.configs["flat/essential"],
+  tseslint.configs.recommended,
+  pluginVue.configs["flat/essential"],
   { 
     files: ["**/*.vue"], 
     languageOptions: { 
