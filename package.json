@@ -15,10 +15,9 @@
   },
   "lint-staged": {
     "src/**/*.{js,ts,vue}": [
-      "eslint --fix",
+      "eslint --fix --cache",
       "prettier --write"
-    ],
-    "*.js": "eslint --cache --fix"
+    ]
   },
   "dependencies": {
     "firebase": "^12.3.0",
