@@ -63,7 +63,7 @@
             <span class="form__error">Error</span>
           </div>
 
-          <div class="form__action">
+          <div class="form__actions">
             <button type="submit" class="form__submit">
               <span class="form__submit-text"> Create Account </span>
             </button>
@@ -102,7 +102,7 @@ import { RouterLink } from 'vue-router';
 }
 
 .register__form-section {
-  background: white;
+  background-color: #fff;
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -137,13 +137,13 @@ import { RouterLink } from 'vue-router';
   border-radius: 6px;
   font-size: 1rem;
   transition: all 0.3s;
-  background: #f7fafc;
+  background-color: #f7fafc;
 }
 
 .form__input:focus {
   outline: none;
   border-color: #48bb78;
-  background: white;
+  background-color: #fff;
   box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
 }
 
@@ -161,8 +161,8 @@ import { RouterLink } from 'vue-router';
 .form__submit {
   width: 100%;
   padding: 0.75rem;
-  background: #48bb78;
-  color: white;
+  background-color: #48bb78;
+  color: #fff;
   border: none;
   border-radius: 6px;
   font-size: 1rem;
@@ -172,7 +172,7 @@ import { RouterLink } from 'vue-router';
 }
 
 .form__submit:hover:not(:disabled) {
-  background: #38a169;
+  background-image: #38a169;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
 }
