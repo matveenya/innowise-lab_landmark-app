@@ -19,7 +19,7 @@ const routes = [
     path: '/register',
     name: 'register',
     component: Register,
-    meta: { reqiresGuest: true },
+    meta: { requiresGuest: true },
   },
   {
     path: '/generalmap',
@@ -43,7 +43,7 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/signin');
-  } else if (to.meta.requireGuest && authStore.isAuthenticated) {
+  } else if (to.meta.requiresGuest && authStore.isAuthenticated) {
     next('/generalmap');
   } else {
     next();
