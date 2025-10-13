@@ -125,7 +125,7 @@ export const useAuthStore = defineStore('auth', {
       const errorMessages: { [key: string]: string } = {
         'auth/email-already-in-use': 'This email is already registered.',
         'auth/invalid-email': 'Please enter a valid email address.',
-        'auth/weak-password': 'Password should be at least 6 characters.',
+        'auth/weak-password': 'Password should be at least 5 symbols',
         'auth/user-not-found': 'No account found with this email.',
         'auth/wrong-password': 'Incorrect password.',
         'auth/too-many-requests': 'Too many attempts. Please try again later.',
