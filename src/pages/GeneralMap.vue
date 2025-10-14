@@ -2,7 +2,10 @@
   <div class="general-map">
     <header class="general-map__header">
       <div class="general-map__header-content">
-        <h1 class="general-map__title">Landmark</h1>
+        <div class="general-map__brand">
+          <h1 class="general-map__title">Landmark</h1>
+          <p class="general-map__user">Welcome, {{ userDisplayName }}!</p>
+        </div>
         <nav class="general-map__nav">
           <button @click="handleLogout" class="general-map__logout">
             Logout
@@ -30,11 +33,16 @@
   </div>
 </template>
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 
 const authStore = useAuthStore();
 const router = useRouter();
+
+const userDisplayName = computed(() => {
+  return authStore.user?.displayName || authStore.user?.email;
+});
 
 async function handleLogout() {
   await authStore.logout();
@@ -66,10 +74,23 @@ async function handleLogout() {
   align-items: center;
 }
 
+.general-map__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
 .general-map__title {
   color: #2d3748;
   font-size: 1.5rem;
   font-weight: 700;
+  margin: 0;
+}
+
+.general-map__user {
+  color: #718096;
+  font-size: 0.875rem;
+  margin: 0;
 }
 
 .general-map__nav {
