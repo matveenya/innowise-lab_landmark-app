@@ -10,8 +10,7 @@ import {
   getDoc,
   DocumentSnapshot,
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../firebase/config';
+import { db } from '../firebase/config';
 import type { Landmark, LandmarkFormData } from '../types';
 import { useAuthStore } from './auth';
 
@@ -39,24 +38,27 @@ export const useLandmarksStore = defineStore('landmarks', {
       const authStore = useAuthStore();
       if (!authStore.user) throw new Error('User not authenticated');
 
+      console.log('Starting to add landmark...', formData);
       this.loading = true;
       try {
         const photosUrls: string[] = [];
-        for (const photo of formData.photos) {
-          const storageRef = ref(
-            storage,
-            `landmarks/${Date.now()}_${photo.name}`
-          );
-          const snapshot = await uploadBytes(storageRef, photo);
-          const url = await getDownloadURL(snapshot.ref);
-          photosUrls.push(url);
-        }
+
+        // Временно закомментируем загрузку фото для тестирования
+        // for (const photo of formData.photos) {
+        //   const storageRef = ref(
+        //     storage,
+        //     `landmarks/${Date.now()}_${photo.name}`
+        //   );
+        //   const snapshot = await uploadBytes(storageRef, photo);
+        //   const url = await getDownloadURL(snapshot.ref);
+        //   photosUrls.push(url);
+        // }
 
         const landmarkData = {
           name: formData.name,
           description: formData.description,
           latitude: formData.latitude,
-          longtitude: formData.longtitude,
+          longitude: formData.longitude,
           createdBy: authStore.user.uid,
           createdAt: new Date(),
           averageRating: formData.userRating,
@@ -67,7 +69,9 @@ export const useLandmarksStore = defineStore('landmarks', {
           },
         };
 
+        console.log('Saving landmark data:', landmarkData);
         const docRef = await addDoc(collection(db, 'landmarks'), landmarkData);
+        console.log('Landmark saved with ID:', docRef.id);
 
         const newLandmark: Landmark = {
           id: docRef.id,
@@ -75,6 +79,7 @@ export const useLandmarksStore = defineStore('landmarks', {
         };
 
         this.landmarks.unshift(newLandmark);
+        console.log('Landmark added to local store');
         return docRef.id;
       } catch (error) {
         console.error('Error adding landmark:', error);
@@ -117,6 +122,8 @@ export const useLandmarksStore = defineStore('landmarks', {
         } else {
           this.landmarks = landmarks;
         }
+
+        console.log(`Fetched ${landmarks.length} landmarks`);
       } catch (error) {
         console.error('Error fetching Landmarks:', error);
       } finally {

@@ -20,7 +20,10 @@
     <main class="general-map__main">
       <div class="general-map__content">
         <section class="general-map__map-section">
-          <LandmarkMap class="general-map__map" />
+          <LandmarkMap
+            :landmarks="landmarksStore.landmarks"
+            class="general-map__map"
+          />
         </section>
       </div>
     </main>
@@ -38,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useLandmarksStore } from '../stores/landmarks';
@@ -57,13 +60,24 @@ const userDisplayName = computed(() => {
   return authStore.user?.displayName || authStore.user?.email;
 });
 
+onMounted(async () => {
+  await landmarksStore.fetchLandmarks();
+});
+
 async function onAddLandmark(formData: LandmarkFormData) {
+  console.log('Received form data in GeneralMap:', formData);
   loading.value = true;
+
   try {
-    await landmarksStore.addLandmark(formData);
+    const landmarkId = await landmarksStore.addLandmark(formData);
+    console.log('Landmark added successfully with ID:', landmarkId);
     showAddLandmark.value = false;
+
+    await landmarksStore.fetchLandmarks();
+    console.log('Landmarks after refresh:', landmarksStore.landmarks.length);
   } catch (error) {
     console.error('Error adding landmark:', error);
+    alert('Error adding landmark: ' + (error as Error).message);
   } finally {
     loading.value = false;
   }
