@@ -16,16 +16,10 @@
 
     <main class="general-map__main">
       <div class="general-map__content">
-        <section class="general-map__info">
-          <p class="general-map__description">
-            Discover and share amazing places around the world
-          </p>
-        </section>
-
         <section class="general-map__map-section">
-          <div class="map-placeholder">
-            <h2 class="map-placeholder__title">Interactive Map</h2>
-            <p class="map-placeholder_description">Leaflet map</p>
+          <div class="general-map__map-test">
+            <h3>Test Map Component</h3>
+            <LandmarkMap class="test-map" />
           </div>
         </section>
       </div>
@@ -36,6 +30,7 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import LandmarkMap from '../components/LandmarkMap.vue';
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -126,45 +121,19 @@ async function handleLogout() {
   padding: 2rem 20px;
 }
 
-.general-map__info {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.general-map__description {
-  color: #4a5568;
-  font-size: 1.125rem;
-  font-weight: 500;
-}
-
 .general-map__map-section {
   margin-top: 2rem;
 }
 
-.map-placeholder {
+.general-map__map-test {
   height: 500px;
-  background-color: #fff;
-  border: 2px dashed #48bb78;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: #718096;
-  background-image: linear-gradient(145deg, #ffffff, #f7fafc);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
 }
 
-.map-placeholder__title {
-  color: #2d3748;
-  margin-bottom: 0.5rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.map-placeholder__description {
-  color: #718096;
-  font-size: 1rem;
+.test-map {
+  height: 100%;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
 }
 
 @media (max-width: 768px) {
