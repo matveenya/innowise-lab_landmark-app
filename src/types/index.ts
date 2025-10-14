@@ -13,7 +13,7 @@ export interface Landmark {
   createdBy: string;
   createdAt: Date;
   averageRating: number;
-  visiteCount: number;
+  visitCount: number;
   photos: string[];
   userRatings: { [userId: string]: number };
 }
