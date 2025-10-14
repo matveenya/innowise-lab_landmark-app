@@ -7,6 +7,9 @@
           <p class="general-map__user">Welcome, {{ userDisplayName }}!</p>
         </div>
         <nav class="general-map__nav">
+          <button @click="showAddLandmark = true" class="general-map__add-btn">
+            Add Landmark
+          </button>
           <button @click="handleLogout" class="general-map__logout">
             Logout
           </button>
@@ -17,30 +20,58 @@
     <main class="general-map__main">
       <div class="general-map__content">
         <section class="general-map__map-section">
-          <div class="general-map__map-test">
-            <h3>Test Map Component</h3>
-            <LandmarkMap class="test-map" />
-          </div>
+          <LandmarkMap class="general-map__map" />
         </section>
       </div>
     </main>
+
+    <div v-if="showAddLandmark" class="general-map__modal">
+      <div class="general-map__modal-content">
+        <LandmarkForm
+          @submit="onAddLandmark"
+          @cancel="showAddLandmark = false"
+          :loading="loading"
+        />
+      </div>
+    </div>
   </div>
 </template>
+
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import { useLandmarksStore } from '../stores/landmarks';
 import LandmarkMap from '../components/LandmarkMap.vue';
+import LandmarkForm from '../components/LandmarkForm.vue';
+import type { LandmarkFormData } from '../types';
 
 const authStore = useAuthStore();
+const landmarksStore = useLandmarksStore();
 const router = useRouter();
+
+const showAddLandmark = ref(false);
+const loading = ref(false);
 
 const userDisplayName = computed(() => {
   return authStore.user?.displayName || authStore.user?.email;
 });
 
+async function onAddLandmark(formData: LandmarkFormData) {
+  loading.value = true;
+  try {
+    await landmarksStore.addLandmark(formData);
+    showAddLandmark.value = false;
+  } catch (error) {
+    console.error('Error adding landmark:', error);
+  } finally {
+    loading.value = false;
+  }
+}
+
 async function handleLogout() {
   await authStore.logout();
+  landmarksStore.clearLandmarks();
   router.push('/signin');
 }
 </script>
@@ -91,6 +122,24 @@ async function handleLogout() {
 .general-map__nav {
   display: flex;
   gap: 1rem;
+  align-items: center;
+}
+
+.general-map__add-btn {
+  padding: 0.5rem 1.5rem;
+  background-color: #48bb78;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.general-map__add-btn:hover {
+  background-color: #38a169;
+  transform: translateY(-1px);
 }
 
 .general-map__logout {
@@ -108,49 +157,50 @@ async function handleLogout() {
 .general-map__logout:hover {
   background-color: #c53030;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
 }
 
 .general-map__main {
   flex: 1;
+  padding: 1rem 0;
 }
 
 .general-map__content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 20px;
+  padding: 0 20px;
 }
 
 .general-map__map-section {
-  margin-top: 2rem;
+  height: 600px;
 }
 
-.general-map__map-test {
-  height: 500px;
-  padding: 1rem;
-}
-
-.test-map {
+.general-map__map {
   height: 100%;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 768px) {
-  .general-map__header-content {
-    padding: 0 15px;
-  }
+.general-map__modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 2rem;
+}
 
-  .general-map__content {
-    padding: 1rem 15px;
-  }
-
-  .general-map-placeholder {
-    height: 400px;
-  }
-
-  .general-map__title {
-    font-size: 1.25rem;
-  }
+.general-map__modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 </style>

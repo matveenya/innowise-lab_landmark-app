@@ -9,7 +9,7 @@ export interface Landmark {
   name: string;
   description: string;
   latitude: number;
-  longtitude: number;
+  longitude: number;
   createdBy: string;
   createdAt: Date;
   averageRating: number;
@@ -19,11 +19,10 @@ export interface Landmark {
 }
 
 export interface LandmarkFormData {
-  id: string;
   name: string;
   description: string;
   latitude: number;
-  longtitude: number;
+  longitude: number;
   userRating: number;
   photos: File[];
 }
