@@ -34,3 +34,16 @@ export interface LandmarkFormData {
   userRating: number;
   photos: File[];
 }
+
+export interface LandmarkUpdateData {
+  name: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  photos: string[]; // Для сохранения существующих фото
+}
+
+export interface MapPosition {
+  lat: number;
+  lng: number;
+}

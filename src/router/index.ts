@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import SignIn from '../pages/SignIn.vue';
 import Register from '../pages/Register.vue';
 import GeneralMap from '../pages/GeneralMap.vue';
+import LandmarkDetail from '../pages/LandmarkDetail.vue';
 import { useAuthStore } from '../stores/auth';
 
 const routes = [
@@ -25,6 +26,12 @@ const routes = [
     path: '/generalmap',
     name: 'generalmap',
     component: GeneralMap,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/landmark/:id',
+    name: 'landmark-detail',
+    component: LandmarkDetail,
     meta: { requiresAuth: true },
   },
 ];

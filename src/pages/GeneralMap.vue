@@ -57,10 +57,14 @@
               :class="{
                 'landmark-card_active': selectedLandmark?.id === landmark.id,
               }"
-              @click="selectLandmark(landmark)"
             >
               <div class="landmark-card__header">
-                <h3 class="landmark-card__title">{{ landmark.name }}</h3>
+                <h3
+                  class="landmark-card__title"
+                  @click="viewLandmarkDetails(landmark)"
+                >
+                  {{ landmark.name }}
+                </h3>
                 <div class="landmark-card__rating">
                   <span class="landmark-card__rating-value">
                     {{ landmark.averageRating.toFixed(1) }}
@@ -162,7 +166,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useLandmarksStore } from '../stores/landmarks';
@@ -214,8 +218,24 @@ function getUserRating(landmark: Landmark): number {
   return landmark.userRatings?.[authStore.user.uid] || 0;
 }
 
+function onLandmarkClick(landmarkId: string) {
+  router.push(`/landmark/${landmarkId}`);
+}
+
 onMounted(async () => {
   await landmarksStore.fetchLandmarks();
+
+  window.addEventListener('landmark-click', (event: Event) => {
+    const customEvent = event as CustomEvent;
+    onLandmarkClick(customEvent.detail);
+  });
+});
+
+onUnmounted(() => {
+  window.removeEventListener('landmark-click', (event: Event) => {
+    const customEvent = event as CustomEvent;
+    onLandmarkClick(customEvent.detail);
+  });
 });
 
 async function onAddLandmark(formData: LandmarkFormData) {
@@ -243,17 +263,8 @@ async function onFilterChange() {
   selectedLandmark.value = null;
 }
 
-function selectLandmark(landmark: Landmark) {
-  selectedLandmark.value = landmark;
-}
-
 function onMarkerClick(landmarkMarker: LandmarkMarker) {
-  const fullLandmark =
-    landmarksStore.landmarks.find((l) => l.id === landmarkMarker.id) ||
-    landmarksStore.userLandmarks.find((l) => l.id === landmarkMarker.id);
-  if (fullLandmark) {
-    selectedLandmark.value = fullLandmark;
-  }
+  onLandmarkClick(landmarkMarker.id);
 }
 
 async function rateLandmark(landmark: Landmark, rating: number) {
@@ -261,6 +272,12 @@ async function rateLandmark(landmark: Landmark, rating: number) {
 
   try {
     await landmarksStore.rateLandmark(landmark.id, rating);
+
+    if (showOnlyUserLandmarks.value) {
+      await landmarksStore.fetchLandmarks(true);
+    } else {
+      await landmarksStore.fetchLandmarks();
+    }
   } catch (error) {
     console.error('Error rating landmark:', error);
     alert('Error rating landmark: ' + (error as Error).message);
@@ -277,7 +294,9 @@ function onScroll(event: Event) {
 
   if (
     scrollHeight - scrollTop <= clientHeight + 100 &&
-    !showOnlyUserLandmarks.value
+    !showOnlyUserLandmarks.value &&
+    landmarksStore.hasMore &&
+    !landmarksStore.loading
   ) {
     loadMoreLandmarks();
   }
@@ -287,6 +306,10 @@ async function handleLogout() {
   await authStore.logout();
   landmarksStore.clearLandmarks();
   router.push('/signin');
+}
+
+function viewLandmarkDetails(landmark: Landmark) {
+  router.push(`/landmark/${landmark.id}`);
 }
 </script>
 

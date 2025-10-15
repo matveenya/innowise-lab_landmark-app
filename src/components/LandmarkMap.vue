@@ -110,14 +110,14 @@ function updateMarkers() {
   props.landmarks.forEach((landmark) => {
     const marker = L.marker([landmark.latitude, landmark.longitude]).addTo(map!)
       .bindPopup(`
-        <div class="landmark-popup">
-          <h3>${landmark.name}</h3>
-          <p>Rating: ${landmark.averageRating.toFixed(1)}/5</p>
-          <button onclick="window.dispatchEvent(new CustomEvent('landmark-click', { detail: '${landmark.id}' }))">
-            View Details
-          </button>
-        </div>
-      `);
+    <div class="landmark-popup">
+      <h3>${landmark.name}</h3>
+      <p>Rating: ${landmark.averageRating.toFixed(1)}/5</p>
+      <button onclick="window.dispatchEvent(new CustomEvent('landmark-click', { detail: '${landmark.id}' }))">
+        View Details
+      </button>
+    </div>
+  `);
 
     marker.on('click', () => {
       emit('marker-click', landmark);
