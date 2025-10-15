@@ -13,7 +13,8 @@ import {
   limit,
   startAfter,
 } from 'firebase/firestore';
-import { db } from '../firebase/config';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../firebase/config';
 import type { Landmark, LandmarkFormData } from '../types';
 import { useAuthStore } from './auth';
 
@@ -64,15 +65,15 @@ export const useLandmarksStore = defineStore('landmarks', {
       try {
         const photosUrls: string[] = [];
 
-        // for (const photo of formData.photos) {
-        //   const storageRef = ref(
-        //     storage,
-        //     `landmarks/${Date.now()}_${photo.name}`
-        //   );
-        //   const snapshot = await uploadBytes(storageRef, photo);
-        //   const url = await getDownloadURL(snapshot.ref);
-        //   photosUrls.push(url);
-        // }
+        for (const photo of formData.photos) {
+          const timestamp = Date.now();
+          const fileName = `${timestamp}_${photo.name}`;
+          const storageRef = ref(storage, `landmarks/${fileName}`);
+
+          const snapshot = await uploadBytes(storageRef, photo);
+          const url = await getDownloadURL(snapshot.ref);
+          photosUrls.push(url);
+        }
 
         const landmarkData = {
           name: formData.name,

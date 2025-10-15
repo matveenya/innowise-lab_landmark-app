@@ -297,7 +297,9 @@ function removePhoto(index: number) {
 function handleSubmit() {
   if (!isFormValid.value) return;
 
-  emit('submit', { ...formData });
+  const photosToSubmit = [...formData.photos];
+
+  emit('submit', { ...formData, photos: photosToSubmit });
 }
 
 onUnmounted(() => {
