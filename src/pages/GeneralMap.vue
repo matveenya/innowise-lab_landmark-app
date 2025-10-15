@@ -89,17 +89,6 @@
                 </span>
               </div>
 
-              <div
-                class="landmark-card__photos"
-                v-if="landmark.photos.length > 0"
-              >
-                <div class="landmark-card__photos-count">
-                  📷 {{ landmark.photos.length }} photo{{
-                    landmark.photos.length !== 1 ? 's' : ''
-                  }}
-                </div>
-              </div>
-
               <div class="landmark-card__actions">
                 <div class="landmark-card__user-rating">
                   <span class="landmark-card__rating-label">Your rating:</span>
@@ -123,13 +112,6 @@
                     </button>
                   </div>
                 </div>
-              </div>
-
-              <div
-                class="landmark-card__author"
-                v-if="landmark.createdBy === authStore.user?.uid"
-              >
-                <span class="landmark-card__author-badge">Your landmark</span>
               </div>
             </div>
 
@@ -543,18 +525,6 @@ async function handleLogout() {
   margin-bottom: 0.75rem;
 }
 
-.landmark-card__photos {
-  margin-bottom: 0.75rem;
-}
-
-.landmark-card__photos-count {
-  font-size: 0.75rem;
-  color: #718096;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
 .landmark-card__actions {
   border-top: 1px solid #e2e8f0;
   padding-top: 0.75rem;
@@ -599,21 +569,6 @@ async function handleLogout() {
 .landmark-card__star:disabled {
   cursor: not-allowed;
   opacity: 0.5;
-}
-
-.landmark-card__author {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-}
-
-.landmark-card__author-badge {
-  background: #bee3f8;
-  color: #2c5282;
-  padding: 0.125rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 500;
 }
 
 .general-map__loading {
