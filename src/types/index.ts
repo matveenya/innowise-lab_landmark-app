@@ -18,6 +18,14 @@ export interface Landmark {
   userRatings: { [userId: string]: number };
 }
 
+export interface LandmarkMarker {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  averageRating: number;
+}
+
 export interface LandmarkFormData {
   name: string;
   description: string;
