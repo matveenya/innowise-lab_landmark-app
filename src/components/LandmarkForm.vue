@@ -2,38 +2,44 @@
   <div class="landmark-form">
     <form @submit.prevent="handleSubmit" class="landmark-form__form">
       <h2 class="landmark-form__title">
-        {{ isEditing ? 'Edit Landmark' : 'Add New Landmark' }}
+        {{
+          isEditing ? $t('landmark.editLandmark') : $t('landmark.addLandmark')
+        }}
       </h2>
 
       <div class="landmark-form__group">
-        <label for="name" class="landmark-form__label">Name</label>
+        <label for="name" class="landmark-form__label">{{
+          $t('landmark.name')
+        }}</label>
         <input
           id="name"
           v-model="formData.name"
           type="text"
           required
           class="landmark-form__input"
-          placeholder="Enter landmark name"
+          :placeholder="$t('landmark.name')"
         />
       </div>
 
       <div class="landmark-form__group">
-        <label for="description" class="landmark-form__label"
-          >Description</label
-        >
+        <label for="description" class="landmark-form__label">
+          {{ $t('landmark.description') }}
+        </label>
         <textarea
           id="description"
           v-model="formData.description"
           required
           class="landmark-form__textarea"
-          placeholder="Enter landmark description"
+          :placeholder="$t('landmark.description')"
           rows="4"
         ></textarea>
       </div>
 
       <div class="landmark-form__group">
-        <label class="landmark-form__label">Location</label>
-        <p class="landmark-form__help">Click on the map to select location</p>
+        <label class="landmark-form__label">{{
+          $t('landmark.location')
+        }}</label>
+        <p class="landmark-form__help">{{ $t('landmark.selectLocation') }}</p>
         <LandmarkMap
           :selectable="true"
           :selected-position="selectedPosition"
@@ -41,12 +47,14 @@
           class="landmark-form__map"
         />
         <div v-if="!selectedPosition" class="landmark-form__error">
-          Please select a location on the map
+          {{ $t('landmark.noLocationSelected') }}
         </div>
       </div>
 
       <div class="landmark-form__group">
-        <label for="rating" class="landmark-form__label">Your Rating</label>
+        <label for="rating" class="landmark-form__label">{{
+          $t('landmark.yourRating')
+        }}</label>
         <div class="landmark-form__rating">
           <button
             v-for="star in 5"
@@ -67,7 +75,7 @@
       </div>
 
       <div class="landmark-form__group">
-        <label class="landmark-form__label">Photos (max 5)</label>
+        <label class="landmark-form__label">{{ $t('landmark.photos') }}</label>
 
         <div
           class="landmark-form__dropzone"
@@ -92,15 +100,15 @@
             v-if="formData.photos.length === 0"
             class="landmark-form__dropzone-content"
           >
-            <p>Drag & drop photos here or</p>
+            <p>{{ $t('landmark.dragDropPhotos') }}</p>
             <button
               type="button"
               @click="triggerFileInput"
               class="landmark-form__browse-btn"
             >
-              Browse Files
+              {{ $t('landmark.browseFiles') }}
             </button>
-            <p class="landmark-form__help">Maximum 5 photos</p>
+            <p class="landmark-form__help">{{ $t('landmark.maxPhotos') }}</p>
           </div>
 
           <div v-else class="landmark-form__previews">
@@ -137,7 +145,7 @@
           v-if="formData.photos.length >= 5"
           class="landmark-form__help landmark-form__help_warning"
         >
-          Maximum 5 photos
+          {{ $t('landmark.maxPhotos') }}
         </p>
       </div>
 
@@ -147,14 +155,20 @@
           @click="$emit('cancel')"
           class="landmark-form__btn landmark-form__btn_secondary"
         >
-          Cancel
+          {{ $t('common.cancel') }}
         </button>
         <button
           type="submit"
           :disabled="!isFormValid || loading"
           class="landmark-form__btn landmark-form__btn_primary"
         >
-          {{ loading ? 'Saving...' : isEditing ? 'Update' : 'Save' }}
+          {{
+            loading
+              ? $t('common.loading')
+              : isEditing
+                ? $t('common.save')
+                : $t('common.save')
+          }}
         </button>
       </div>
     </form>

@@ -3,10 +3,13 @@
     <header class="general-map__header">
       <div class="general-map__header-content">
         <div class="general-map__brand">
-          <h1 class="general-map__title">Landmark App</h1>
-          <p class="general-map__user">Welcome, {{ userDisplayName }}!</p>
+          <h1 class="general-map__title">{{ $t('landmark.landmarks') }}</h1>
+          <p class="general-map__user">
+            {{ $t('auth.welcome') }}, {{ userDisplayName }}!
+          </p>
         </div>
         <nav class="general-map__nav">
+          <LanguageSwitcher class="general-map__language-switcher" />
           <div class="general-map__filters">
             <label class="general-map__filter-label">
               <input
@@ -15,14 +18,14 @@
                 @change="onFilterChange"
                 class="general-map__checkbox"
               />
-              Show only my landmarks
+              {{ $t('landmark.showOnlyMyLandmarks') }}
             </label>
           </div>
           <button @click="showAddLandmark = true" class="general-map__add-btn">
-            Add Landmark
+            {{ $t('landmark.addLandmark') }}
           </button>
           <button @click="handleLogout" class="general-map__logout">
-            Logout
+            {{ $t('auth.logout') }}
           </button>
         </nav>
       </div>
@@ -41,12 +44,18 @@
         <aside class="general-map__sidebar">
           <div class="general-map__sidebar-header">
             <h2 class="general-map__sidebar-title">
-              {{ showOnlyUserLandmarks ? 'My Landmarks' : 'Top Landmarks' }}
+              {{
+                showOnlyUserLandmarks
+                  ? $t('landmark.myLandmarks')
+                  : $t('landmark.topLandmarks')
+              }}
             </h2>
             <p
               class="general-map__sidebar-subtitle"
               v-if="!showOnlyUserLandmarks"
-            ></p>
+            >
+              {{ $t('landmark.topLandmarks') }}
+            </p>
           </div>
 
           <div class="general-map__landmarks-list" @scroll="onScroll">
@@ -57,12 +66,10 @@
               :class="{
                 'landmark-card_active': selectedLandmark?.id === landmark.id,
               }"
+              @click="viewLandmarkDetails(landmark)"
             >
               <div class="landmark-card__header">
-                <h3
-                  class="landmark-card__title"
-                  @click="viewLandmarkDetails(landmark)"
-                >
+                <h3 class="landmark-card__title">
                   {{ landmark.name }}
                 </h3>
                 <div class="landmark-card__rating">
@@ -75,15 +82,13 @@
 
               <div class="landmark-card__meta">
                 <span class="landmark-card__visits">
-                  {{ landmark.visitCount }} visit{{
-                    landmark.visitCount !== 1 ? 's' : ''
-                  }}
+                  {{ landmark.visitCount }} {{ $t('landmark.visits') }}
                 </span>
                 <span
                   class="landmark-card__score"
                   v-if="!showOnlyUserLandmarks"
                 >
-                  Score:
+                  {{ $t('landmark.score') }}:
                   {{
                     calculateScore(
                       landmark.averageRating,
@@ -95,7 +100,9 @@
 
               <div class="landmark-card__actions">
                 <div class="landmark-card__user-rating">
-                  <span class="landmark-card__rating-label">Your rating:</span>
+                  <span class="landmark-card__rating-label"
+                    >{{ $t('landmark.yourRating') }}:</span
+                  >
                   <div class="landmark-card__stars">
                     <button
                       v-for="star in 5"
@@ -120,7 +127,7 @@
             </div>
 
             <div v-if="landmarksStore.loading" class="general-map__loading">
-              Loading more landmarks...
+              {{ $t('landmark.loadingMore') }}
             </div>
 
             <button
@@ -132,20 +139,20 @@
               @click="loadMoreLandmarks"
               class="general-map__load-more"
             >
-              Load More
+              {{ $t('landmark.loadMore') }}
             </button>
 
             <div
               v-if="displayedLandmarksList.length === 0"
               class="general-map__empty"
             >
-              <p>No landmarks found.</p>
+              <p>{{ $t('landmark.noLandmarksFound') }}</p>
               <button
                 v-if="showOnlyUserLandmarks"
                 @click="showAddLandmark = true"
                 class="general-map__empty-btn"
               >
-                Add your first landmark
+                {{ $t('landmark.addFirstLandmark') }}
               </button>
             </div>
           </div>
@@ -166,6 +173,7 @@
 </template>
 
 <script setup lang="ts">
+import LanguageSwitcher from '../components/LanguageSwitcher.vue';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
@@ -655,6 +663,10 @@ function viewLandmarkDetails(landmark: Landmark) {
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
+}
+
+.general-map__language-switcher {
+  margin-right: 1rem;
 }
 
 @media (max-width: 1024px) {

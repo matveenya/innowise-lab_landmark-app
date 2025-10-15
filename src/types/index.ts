@@ -40,10 +40,12 @@ export interface LandmarkUpdateData {
   description: string;
   latitude: number;
   longitude: number;
-  photos: string[]; // Для сохранения существующих фото
+  photos: string[];
 }
 
 export interface MapPosition {
   lat: number;
   lng: number;
 }
+
+export type Locale = 'en' | 'ru' | 'be';
