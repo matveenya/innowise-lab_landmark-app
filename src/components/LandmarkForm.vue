@@ -81,7 +81,7 @@
           class="landmark-form__dropzone"
           :class="{
             'landmark-form__dropzone_active': isDrag,
-            'landmark-form__dropzone_full': formData.photos.length >= 5,
+            'landmark-form__dropzone_full': allPhotos.length >= 5,
           }"
           @drop="onDrop"
           @dragover.prevent="onDrag"
@@ -97,7 +97,7 @@
           />
 
           <div
-            v-if="formData.photos.length === 0"
+            v-if="allPhotos.length === 0"
             class="landmark-form__dropzone-content"
           >
             <p>{{ $t('landmark.dragDropPhotos') }}</p>
@@ -113,7 +113,7 @@
 
           <div v-else class="landmark-form__previews">
             <div
-              v-for="(photo, index) in formData.photos"
+              v-for="(photo, index) in allPhotos"
               :key="index"
               class="landmark-form__preview"
             >
@@ -129,10 +129,16 @@
               >
                 ×
               </button>
+              <div
+                v-if="photo.type === 'new'"
+                class="landmark-form__photo-badge"
+              >
+                New
+              </div>
             </div>
 
             <div
-              v-if="formData.photos.length < 5"
+              v-if="allPhotos.length < 5"
               class="landmark-form__add-more"
               @click="triggerFileInput"
             >
@@ -142,7 +148,7 @@
         </div>
 
         <p
-          v-if="formData.photos.length >= 5"
+          v-if="allPhotos.length >= 5"
           class="landmark-form__help landmark-form__help_warning"
         >
           {{ $t('landmark.maxPhotos') }}
@@ -187,8 +193,14 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'submit', data: LandmarkFormData): void;
+  (e: 'submit', data: LandmarkFormData & { existingPhotos?: string[] }): void;
   (e: 'cancel'): void;
+}
+
+interface PhotoItem {
+  type: 'existing' | 'new';
+  file?: File;
+  url?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -202,13 +214,14 @@ const authStore = useAuthStore();
 
 const isEditing = computed(() => !!props.landmark);
 
-const formData = reactive<LandmarkFormData>({
+const formData = reactive<LandmarkFormData & { existingPhotos?: string[] }>({
   name: '',
   description: '',
   latitude: 0,
   longitude: 0,
   userRating: 0,
   photos: [],
+  existingPhotos: [],
 });
 
 const selectedPosition = ref<{ lat: number; lng: number } | null>(null);
@@ -225,6 +238,18 @@ const isFormValid = computed(() => {
   );
 });
 
+const allPhotos = computed((): PhotoItem[] => {
+  const existing: PhotoItem[] = (formData.existingPhotos || []).map((url) => ({
+    type: 'existing',
+    url,
+  }));
+  const newPhotos: PhotoItem[] = formData.photos.map((file) => ({
+    type: 'new',
+    file,
+  }));
+  return [...existing, ...newPhotos];
+});
+
 watch(
   () => props.landmark,
   (landmark) => {
@@ -239,6 +264,17 @@ watch(
       };
       formData.latitude = landmark.latitude;
       formData.longitude = landmark.longitude;
+      formData.existingPhotos = [...(landmark.photos || [])];
+      formData.photos = [];
+    } else {
+      formData.name = '';
+      formData.description = '';
+      formData.userRating = 0;
+      selectedPosition.value = null;
+      formData.latitude = 0;
+      formData.longitude = 0;
+      formData.photos = [];
+      formData.existingPhotos = [];
     }
   },
   { immediate: true }
@@ -280,18 +316,36 @@ function onDrop(event: DragEvent) {
 }
 
 function handleFiles(files: File[]) {
-  const remainingSlots = 5 - formData.photos.length;
+  const remainingSlots = 5 - allPhotos.value.length;
   const filesToAdd = files.slice(0, remainingSlots);
 
   formData.photos.push(...filesToAdd);
 }
 
-function getPreviewUrl(file: File): string {
-  return URL.createObjectURL(file);
+function getPreviewUrl(item: PhotoItem): string {
+  if (item.type === 'new' && item.file) {
+    return URL.createObjectURL(item.file);
+  }
+  return item.url || '';
 }
 
 function removePhoto(index: number) {
-  formData.photos.splice(index, 1);
+  const item = allPhotos.value[index];
+
+  if (!item) return;
+
+  if (item.type === 'existing' && formData.existingPhotos) {
+    const existingIndex = formData.existingPhotos.indexOf(item.url || '');
+    if (existingIndex !== -1) {
+      formData.existingPhotos.splice(existingIndex, 1);
+    }
+  } else if (item.type === 'new' && item.file) {
+    const fileIndex = formData.photos.findIndex((photo) => photo === item.file);
+    if (fileIndex !== -1) {
+      URL.revokeObjectURL(getPreviewUrl(item));
+      formData.photos.splice(fileIndex, 1);
+    }
+  }
 }
 
 function handleSubmit() {
@@ -299,13 +353,17 @@ function handleSubmit() {
 
   const photosToSubmit = [...formData.photos];
 
-  emit('submit', { ...formData, photos: photosToSubmit });
+  emit('submit', {
+    ...formData,
+    photos: photosToSubmit,
+    existingPhotos: formData.existingPhotos || [],
+  });
 }
 
 onUnmounted(() => {
-  formData.photos.forEach((photo) => {
-    if (photo instanceof File) {
-      URL.revokeObjectURL(getPreviewUrl(photo));
+  allPhotos.value.forEach((item) => {
+    if (item.type === 'new' && item.file) {
+      URL.revokeObjectURL(getPreviewUrl(item));
     }
   });
 });
@@ -472,6 +530,18 @@ onUnmounted(() => {
   height: 100%;
   object-fit: cover;
   border-radius: 4px;
+}
+
+.landmark-form__photo-badge {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: #48bb78;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .landmark-form__remove-photo {

@@ -2,21 +2,34 @@
   <div class="landmark-detail">
     <div class="landmark-detail__header">
       <button @click="$router.back()" class="landmark-detail__back-btn">
-        ← Back
+        ← {{ $t('landmark.backToMap') }}
       </button>
 
       <template v-if="landmark">
         <h1 class="landmark-detail__title">{{ landmark.name }}</h1>
         <div v-if="isOwner" class="landmark-detail__actions">
-          <button @click="editMode = true" class="landmark-detail__edit-btn">
-            Edit
+          <button
+            @click="editMode = true"
+            class="landmark-detail__edit-btn"
+            :disabled="saving"
+          >
+            {{ $t('common.edit') }}
+          </button>
+          <button
+            @click="deleteLandmark"
+            class="landmark-detail__delete-btn"
+            :disabled="deleting"
+          >
+            {{ deleting ? $t('common.loading') : $t('common.delete') }}
           </button>
         </div>
       </template>
       <div v-else class="landmark-detail__title-placeholder"></div>
     </div>
 
-    <div v-if="loading" class="landmark-detail__loading">Loading...</div>
+    <div v-if="loading" class="landmark-detail__loading">
+      {{ $t('common.loading') }}
+    </div>
 
     <div v-else-if="!landmark" class="landmark-detail__not-found">
       <p>Landmark not found</p>
@@ -24,7 +37,7 @@
         @click="$router.push('/generalmap')"
         class="landmark-detail__back-to-map"
       >
-        Back to Map
+        {{ $t('landmark.backToMap') }}
       </button>
     </div>
 
@@ -40,15 +53,20 @@
       <div v-else class="landmark-detail__view">
         <div class="landmark-detail__info">
           <div class="landmark-detail__section">
-            <h2 class="landmark-detail__section-title">Description</h2>
+            <h2 class="landmark-detail__section-title">
+              {{ $t('landmark.description') }}
+            </h2>
             <p class="landmark-detail__description">
               {{ landmark.description }}
             </p>
           </div>
 
           <div class="landmark-detail__section">
-            <h2 class="landmark-detail__section-title">Location</h2>
+            <h2 class="landmark-detail__section-title">
+              {{ $t('landmark.location') }}
+            </h2>
             <div class="landmark-detail__coordinates">
+              {{ $t('landmark.coordinates') }}:
               {{ landmark.latitude.toFixed(4) }},
               {{ landmark.longitude.toFixed(4) }}
             </div>
@@ -61,7 +79,9 @@
 
           <div class="landmark-detail__ratings">
             <div class="landmark-detail__rating-section">
-              <h3 class="landmark-detail__rating-title">Overall Rating</h3>
+              <h3 class="landmark-detail__rating-title">
+                {{ $t('landmark.overallRating') }}
+              </h3>
               <div class="landmark-detail__rating-display">
                 <span class="landmark-detail__rating-value">
                   {{ landmark.averageRating.toFixed(1) }}
@@ -74,7 +94,9 @@
             </div>
 
             <div class="landmark-detail__rating-section">
-              <h3 class="landmark-detail__rating-title">Your Rating</h3>
+              <h3 class="landmark-detail__rating-title">
+                {{ $t('landmark.yourRating') }}
+              </h3>
               <div class="landmark-detail__user-rating">
                 <div class="landmark-detail__stars">
                   <button
@@ -102,7 +124,9 @@
             v-if="landmark.photos && landmark.photos.length > 0"
             class="landmark-detail__section"
           >
-            <h2 class="landmark-detail__section-title">Photos</h2>
+            <h2 class="landmark-detail__section-title">
+              {{ $t('landmark.photos') }}
+            </h2>
             <div class="landmark-detail__photos">
               <div
                 v-for="(photo, index) in landmark.photos"
@@ -160,8 +184,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { useRoute, useRouter } from 'vue-router';
+import { doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { useAuthStore } from '../stores/auth';
 import { useLandmarksStore } from '../stores/landmarks';
@@ -175,6 +199,7 @@ import type {
 } from '../types';
 
 const route = useRoute();
+const router = useRouter();
 const authStore = useAuthStore();
 const landmarksStore = useLandmarksStore();
 
@@ -185,6 +210,7 @@ const saving = ref(false);
 const ratingLandmark = ref(false);
 const photoViewerOpen = ref(false);
 const currentPhotoIndex = ref(0);
+const deleting = ref(false);
 
 const landmarkId = computed(() => route.params.id as string);
 
@@ -257,27 +283,25 @@ async function fetchLandmark() {
   }
 }
 
-async function onUpdateLandmark(formData: LandmarkFormData) {
+async function onUpdateLandmark(
+  formData: LandmarkFormData & { existingPhotos?: string[] }
+) {
+  if (!landmark.value) return;
+
   try {
     saving.value = true;
-    const docRef = doc(db, 'landmarks', landmarkId.value);
 
-    await updateDoc(docRef, {
-      name: formData.name,
-      description: formData.description,
-      latitude: formData.latitude,
-      longitude: formData.longitude,
-      photos: landmark.value?.photos || [],
-    });
+    await landmarksStore.updateLandmark(
+      landmark.value.id,
+      formData,
+      formData.existingPhotos || []
+    );
 
-    if (landmark.value) {
-      landmark.value.name = formData.name;
-      landmark.value.description = formData.description;
-      landmark.value.latitude = formData.latitude;
-      landmark.value.longitude = formData.longitude;
-    }
+    await fetchLandmark();
 
     editMode.value = false;
+
+    alert('Landmark updated successfully!');
   } catch (error) {
     console.error('Error updating landmark:', error);
     alert('Error updating landmark: ' + (error as Error).message);
@@ -301,20 +325,44 @@ async function rateLandmark(rating: number) {
   }
 }
 
+async function deleteLandmark() {
+  if (
+    !landmark.value ||
+    !confirm('Are you sure you want to delete this landmark?')
+  ) {
+    return;
+  }
+
+  try {
+    deleting.value = true;
+    const landmarkRef = doc(db, 'landmarks', landmark.value.id);
+    await deleteDoc(landmarkRef);
+
+    landmarksStore.clearLandmarks();
+
+    router.push('/generalmap');
+  } catch (error) {
+    console.error('Error deleting landmark:', error);
+    alert('Error deleting landmark: ' + (error as Error).message);
+  } finally {
+    deleting.value = false;
+  }
+}
+
 function openPhotoViewer(index: number) {
-  if (!landmark.value) return;
+  if (!landmark.value || !landmark.value.photos) return;
   currentPhotoIndex.value = index;
   photoViewerOpen.value = true;
 }
 
 function nextPhoto() {
-  if (!landmark.value) return;
+  if (!landmark.value || !landmark.value.photos) return;
   currentPhotoIndex.value =
     (currentPhotoIndex.value + 1) % landmark.value.photos.length;
 }
 
 function prevPhoto() {
-  if (!landmark.value) return;
+  if (!landmark.value || !landmark.value.photos) return;
   currentPhotoIndex.value =
     currentPhotoIndex.value === 0
       ? landmark.value.photos.length - 1
@@ -622,6 +670,27 @@ function prevPhoto() {
   transform: translateX(-50%);
   color: white;
   font-size: 1rem;
+}
+
+.landmark-detail__delete-btn {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  margin-left: 0.5rem;
+}
+
+.landmark-detail__delete-btn:hover:not(:disabled) {
+  background: #c53030;
+}
+
+.landmark-detail__delete-btn:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
 }
 
 @media (max-width: 768px) {

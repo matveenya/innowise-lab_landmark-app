@@ -41,6 +41,7 @@ export interface LandmarkUpdateData {
   latitude: number;
   longitude: number;
   photos: string[];
+  updatedAt: Date;
 }
 
 export interface MapPosition {

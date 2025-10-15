@@ -225,6 +225,77 @@ export const useLandmarksStore = defineStore('landmarks', {
       }
     },
 
+    async updateLandmark(
+      landmarkId: string,
+      formData: LandmarkFormData,
+      existingPhotos: string[] = []
+    ) {
+      const authStore = useAuthStore();
+      if (!authStore.user) throw new Error('User not authenticated');
+
+      this.loading = true;
+      try {
+        const photosUrls = [...existingPhotos];
+
+        if (formData.photos && formData.photos.length > 0) {
+          for (const photo of formData.photos) {
+            if (typeof photo === 'string') continue;
+
+            const timestamp = Date.now();
+            const fileName = `${timestamp}_${photo.name}`;
+            const storageRef = ref(storage, `landmarks/${fileName}`);
+
+            const snapshot = await uploadBytes(storageRef, photo);
+            const url = await getDownloadURL(snapshot.ref);
+            photosUrls.push(url);
+          }
+        }
+
+        const landmarkData = {
+          name: formData.name,
+          description: formData.description,
+          latitude: formData.latitude,
+          longitude: formData.longitude,
+          photos: photosUrls,
+          updatedAt: new Date(),
+        };
+
+        const landmarkRef = doc(db, 'landmarks', landmarkId);
+        await updateDoc(landmarkRef, landmarkData);
+
+        const landmarkIndex = this.landmarks.findIndex(
+          (l) => l.id === landmarkId
+        );
+        if (landmarkIndex !== -1) {
+          const updatedLandmark: Landmark = {
+            ...this.landmarks[landmarkIndex],
+            ...landmarkData,
+            photos: photosUrls,
+          } as Landmark;
+          this.landmarks[landmarkIndex] = updatedLandmark;
+        }
+
+        const userLandmarkIndex = this.userLandmarks.findIndex(
+          (l) => l.id === landmarkId
+        );
+        if (userLandmarkIndex !== -1) {
+          const updatedUserLandmark: Landmark = {
+            ...this.userLandmarks[userLandmarkIndex],
+            ...landmarkData,
+            photos: photosUrls,
+          } as Landmark;
+          this.userLandmarks[userLandmarkIndex] = updatedUserLandmark;
+        }
+
+        return true;
+      } catch (error) {
+        console.error('Error updating landmark:', error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
     async rateLandmark(landmarkId: string, rating: number) {
       const authStore = useAuthStore();
       if (!authStore.user) throw new Error('User not authenticated');
