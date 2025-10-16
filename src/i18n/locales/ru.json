@@ -9,20 +9,7 @@
     "success": "Успешно"
   },
   "auth": {
-    "signIn": "Войти",
-    "register": "Регистрация",
-    "logout": "Выйти",
-    "email": "Email",
-    "password": "Пароль",
-    "confirmPassword": "Подтвердите пароль",
-    "displayName": "Отображаемое имя",
-    "welcome": "Добро пожаловать",
-    "createAccount": "Создать аккаунт",
-    "signInToAccount": "Войдите в свой аккаунт",
-    "alreadyHaveAccount": "Уже есть аккаунт?",
-    "dontHaveAccount": "Нет аккаунта?",
-    "goToSignIn": "Перейти к входу",
-    "goToRegister": "Перейти к регистрации"
+    "logout": "Выйти"
   },
   "landmark": {
     "landmarks": "Достопримечательности",
@@ -54,11 +41,9 @@
     "backToMap": "Назад к карте",
     "coordinates": "Координаты"
   },
-  "validation": {
-    "required": "Это поле обязательно",
-    "emailInvalid": "Пожалуйста введите корректный email",
-    "passwordLength": "Пароль должен быть больше 5 символов",
-    "passwordsDontMatch": "Пароли не совпадают",
-    "displayNameLength": "Имя должно быть больше 2 символов"
+    "admin": {
+    "admin": "Администратор",
+    "cannotRate": "Администраторы не могут оценивать достопримечательности",
+    "allLandmarks": "Все достопримечательности"
   }
 }

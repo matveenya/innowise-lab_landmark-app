@@ -57,6 +57,34 @@ export const useLandmarksStore = defineStore('landmarks', {
   },
 
   actions: {
+    canEditLandmark(landmark: Landmark): boolean {
+      const authStore = useAuthStore();
+      if (!authStore.user) return false;
+
+      if (authStore.isAdmin) return true;
+
+      return landmark.createdBy === authStore.user.uid;
+    },
+
+    canDeleteLandmark(landmark: Landmark): boolean {
+      const authStore = useAuthStore();
+      if (!authStore.user) return false;
+
+      if (authStore.isAdmin) return true;
+
+      return landmark.createdBy === authStore.user.uid;
+    },
+
+    canRateLandmark(landmark: Landmark): boolean {
+      const authStore = useAuthStore();
+      if (!authStore.user) return false;
+
+      if (authStore.isAdmin) return false;
+
+      console.log(landmark);
+      return true;
+    },
+
     async addLandmark(formData: LandmarkFormData) {
       const authStore = useAuthStore();
       if (!authStore.user) throw new Error('User not authenticated');
@@ -299,6 +327,14 @@ export const useLandmarksStore = defineStore('landmarks', {
     async rateLandmark(landmarkId: string, rating: number) {
       const authStore = useAuthStore();
       if (!authStore.user) throw new Error('User not authenticated');
+
+      const landmark =
+        this.landmarks.find((l) => l.id === landmarkId) ||
+        this.userLandmarks.find((l) => l.id === landmarkId);
+
+      if (landmark && !this.canRateLandmark(landmark)) {
+        throw new Error('Admins cannot rate landmarks');
+      }
 
       try {
         const landmarkRef = doc(db, 'landmarks', landmarkId);

@@ -7,7 +7,7 @@
 
       <template v-if="landmark">
         <h1 class="landmark-detail__title">{{ landmark.name }}</h1>
-        <div v-if="isOwner" class="landmark-detail__actions">
+        <div v-if="canEdit" class="landmark-detail__actions">
           <button
             @click="editMode = true"
             class="landmark-detail__edit-btn"
@@ -16,6 +16,7 @@
             {{ $t('common.edit') }}
           </button>
           <button
+            v-if="canDelete"
             @click="deleteLandmark"
             class="landmark-detail__delete-btn"
             :disabled="deleting"
@@ -88,12 +89,13 @@
                 </span>
                 <span class="landmark-detail__rating-star">★</span>
                 <span class="landmark-detail__rating-count">
-                  ({{ Object.keys(landmark.userRatings || {}).length }} ratings)
+                  ({{ Object.keys(landmark.userRatings || {}).length }}
+                  {{ $t('landmark.visits') }})
                 </span>
               </div>
             </div>
 
-            <div class="landmark-detail__rating-section">
+            <div v-if="canRate" class="landmark-detail__rating-section">
               <h3 class="landmark-detail__rating-title">
                 {{ $t('landmark.yourRating') }}
               </h3>
@@ -118,6 +120,12 @@
                 </span>
               </div>
             </div>
+
+            <div v-else class="landmark-detail__rating-section">
+              <p class="landmark-detail__admin-notice">
+                {{ $t('admin.cannotRate') }}
+              </p>
+            </div>
           </div>
 
           <div
@@ -140,6 +148,21 @@
                   @click="openPhotoViewer(index)"
                 />
               </div>
+            </div>
+          </div>
+
+          <div class="landmark-detail__section" v-if="authStore.isAdmin">
+            <h2 class="landmark-detail__section-title">Admin Information</h2>
+            <div class="landmark-detail__admin-info">
+              <p><strong>Created by:</strong> {{ landmark.createdBy }}</p>
+              <p>
+                <strong>Created at:</strong>
+                {{ formatDate(landmark.createdAt) }}
+              </p>
+              <p>
+                <strong>Total ratings:</strong>
+                {{ Object.keys(landmark.userRatings || {}).length }}
+              </p>
             </div>
           </div>
         </div>
@@ -214,12 +237,16 @@ const deleting = ref(false);
 
 const landmarkId = computed(() => route.params.id as string);
 
-const isOwner = computed(() => {
-  return (
-    landmark.value &&
-    authStore.user &&
-    landmark.value.createdBy === authStore.user.uid
-  );
+const canEdit = computed(() => {
+  return landmark.value && landmarksStore.canEditLandmark(landmark.value);
+});
+
+const canDelete = computed(() => {
+  return landmark.value && landmarksStore.canDeleteLandmark(landmark.value);
+});
+
+const canRate = computed(() => {
+  return landmark.value && landmarksStore.canRateLandmark(landmark.value);
 });
 
 const userRating = computed(() => {
@@ -247,6 +274,10 @@ const selectedPosition = computed((): MapPosition | null => {
     lng: landmark.value.longitude,
   };
 });
+
+function formatDate(date: Date): string {
+  return new Date(date).toLocaleString();
+}
 
 onMounted(async () => {
   await fetchLandmark();
@@ -415,6 +446,11 @@ function prevPhoto() {
   height: 2rem;
 }
 
+.landmark-detail__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .landmark-detail__edit-btn {
   background: #48bb78;
   color: white;
@@ -426,8 +462,33 @@ function prevPhoto() {
   transition: all 0.3s;
 }
 
-.landmark-detail__edit-btn:hover {
+.landmark-detail__edit-btn:hover:not(:disabled) {
   background: #38a169;
+}
+
+.landmark-detail__edit-btn:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
+}
+
+.landmark-detail__delete-btn {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.landmark-detail__delete-btn:hover:not(:disabled) {
+  background: #c53030;
+}
+
+.landmark-detail__delete-btn:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
 }
 
 .landmark-detail__loading {
@@ -453,8 +514,19 @@ function prevPhoto() {
   cursor: pointer;
 }
 
+.landmark-detail__content {
+  display: grid;
+  gap: 2rem;
+}
+
 .landmark-detail__view {
   display: grid;
+  gap: 2rem;
+}
+
+.landmark-detail__info {
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
 }
 
@@ -537,6 +609,7 @@ function prevPhoto() {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .landmark-detail__stars {
@@ -573,6 +646,16 @@ function prevPhoto() {
   font-weight: 600;
 }
 
+.landmark-detail__admin-notice {
+  color: #718096;
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 4px;
+  margin: 0;
+}
+
 .landmark-detail__photos {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -597,6 +680,23 @@ function prevPhoto() {
   object-fit: cover;
 }
 
+.landmark-detail__admin-info {
+  background: #f7fafc;
+  padding: 1rem;
+  border-radius: 6px;
+  border-left: 4px solid #e53e3e;
+}
+
+.landmark-detail__admin-info p {
+  margin: 0.5rem 0;
+  color: #4a5568;
+  font-size: 0.875rem;
+}
+
+.landmark-detail__admin-info strong {
+  color: #2d3748;
+}
+
 .landmark-detail__photo-viewer {
   position: fixed;
   top: 0;
@@ -614,6 +714,9 @@ function prevPhoto() {
   position: relative;
   max-width: 90vw;
   max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .landmark-detail__photo-viewer-close {
@@ -630,6 +733,7 @@ function prevPhoto() {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1001;
 }
 
 .landmark-detail__photo-nav {
@@ -647,6 +751,12 @@ function prevPhoto() {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
+  z-index: 1001;
+  transition: background-color 0.3s;
+}
+
+.landmark-detail__photo-nav:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .landmark-detail__photo-nav_prev {
@@ -672,27 +782,6 @@ function prevPhoto() {
   font-size: 1rem;
 }
 
-.landmark-detail__delete-btn {
-  background: #e53e3e;
-  color: white;
-  border: none;
-  padding: 0.5rem 1.5rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s;
-  margin-left: 0.5rem;
-}
-
-.landmark-detail__delete-btn:hover:not(:disabled) {
-  background: #c53030;
-}
-
-.landmark-detail__delete-btn:disabled {
-  background: #a0aec0;
-  cursor: not-allowed;
-}
-
 @media (max-width: 768px) {
   .landmark-detail {
     padding: 1rem;
@@ -708,6 +797,10 @@ function prevPhoto() {
     font-size: 1.5rem;
   }
 
+  .landmark-detail__actions {
+    justify-content: center;
+  }
+
   .landmark-detail__ratings {
     grid-template-columns: 1fr;
   }
@@ -716,12 +809,39 @@ function prevPhoto() {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
 
+  .landmark-detail__user-rating {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   .landmark-detail__photo-nav_prev {
     left: 10px;
   }
 
   .landmark-detail__photo-nav_next {
     right: 10px;
+  }
+
+  .landmark-detail__photo-viewer-close {
+    top: 10px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .landmark-detail__section {
+    padding: 1rem;
+  }
+
+  .landmark-detail__photos {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .landmark-detail__rating-display {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
   }
 }
 </style>

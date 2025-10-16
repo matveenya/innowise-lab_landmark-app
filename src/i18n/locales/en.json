@@ -9,20 +9,7 @@
     "success": "Success"
   },
   "auth": {
-    "signIn": "Sign In",
-    "register": "Register",
-    "logout": "Logout",
-    "email": "Email",
-    "password": "Password",
-    "confirmPassword": "Confirm Password",
-    "displayName": "Display Name",
-    "welcome": "Welcome",
-    "createAccount": "Create Account",
-    "signInToAccount": "Sign in to your account",
-    "alreadyHaveAccount": "Already have an account?",
-    "dontHaveAccount": "Don't have an account?",
-    "goToSignIn": "Go to Sign In",
-    "goToRegister": "Go to Register"
+    "logout": "Logout"
   },
   "landmark": {
     "landmarks": "Landmarks",
@@ -54,11 +41,9 @@
     "backToMap": "Back to Map",
     "coordinates": "Coordinates"
   },
-  "validation": {
-    "required": "This field is required",
-    "emailInvalid": "Please enter a valid email",
-    "passwordLength": "Password must be more than 5 symbols",
-    "passwordsDontMatch": "Passwords do not match",
-    "displayNameLength": "Display name must be more than 2 symbols"
+    "admin": {
+    "admin": "Admin",
+    "cannotRate": "Administrators cannot rate landmarks",
+    "allLandmarks": "All Landmarks"
   }
 }

@@ -9,20 +9,7 @@
     "success": "Паспяхова"
   },
   "auth": {
-    "signIn": "Увайсці",
-    "register": "Рэгістрацыя",
-    "logout": "Выйсці",
-    "email": "Email",
-    "password": "Пароль",
-    "confirmPassword": "Пацвердзіце пароль",
-    "displayName": "Імя для адлюстравання",
-    "welcome": "Сардэчна запрашаем",
-    "createAccount": "Стварыць акаўнт",
-    "signInToAccount": "Увайдзіце ў свой акаўнт",
-    "alreadyHaveAccount": "Ужо ёсць акаўнт?",
-    "dontHaveAccount": "Няма акаўнта?",
-    "goToSignIn": "Перайсці да ўваходу",
-    "goToRegister": "Перайсці да рэгістрацыі"
+    "logout": "Выйсці"
   },
   "landmark": {
     "landmarks": "Славутасці",
@@ -54,11 +41,9 @@
     "backToMap": "Назад да карты",
     "coordinates": "Каардынаты"
   },
-  "validation": {
-    "required": "Гэта поле абавязкова",
-    "emailInvalid": "Калі ласка ўвядзіце карэктны email",
-    "passwordLength": "Пароль павінен быць больш за 5 сімвалаў",
-    "passwordsDontMatch": "Паролі не супадаюць",
-    "displayNameLength": "Імя павінна быць больш за 2 сімвалы"
+    "admin": {
+    "admin": "Адміністратар",
+    "cannotRate": "Адміністратары не могуць ацэньваць славутасці",
+    "allLandmarks": "Усе славутасці"
   }
 }

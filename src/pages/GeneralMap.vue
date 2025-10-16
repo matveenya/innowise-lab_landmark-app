@@ -5,7 +5,10 @@
         <div class="general-map__brand">
           <h1 class="general-map__title">{{ $t('landmark.landmarks') }}</h1>
           <p class="general-map__user">
-            {{ $t('auth.welcome') }}, {{ userDisplayName }}!
+            {{ $t('welcome') }}, {{ userDisplayName }}!
+            <span v-if="authStore.isAdmin" class="general-map__admin-badge">
+              ({{ $t('admin.admin') }})
+            </span>
           </p>
         </div>
         <nav class="general-map__nav">
@@ -96,6 +99,12 @@
                     ).toFixed(2)
                   }}
                 </span>
+                <span
+                  class="landmark-card__owner"
+                  v-if="showOwnerInfo(landmark)"
+                >
+                  {{ getOwnerDisplayName(landmark) }}
+                </span>
               </div>
 
               <div class="landmark-card__actions">
@@ -113,15 +122,22 @@
                         'landmark-card__star_active':
                           star <= getUserRating(landmark),
                         'landmark-card__star_clickable':
-                          !showOnlyUserLandmarks ||
-                          landmark.createdBy === authStore.user?.uid,
+                          canRateLandmark(landmark),
                       }"
                       @click.stop="rateLandmark(landmark, star)"
-                      :disabled="landmarksStore.loading"
+                      :disabled="
+                        !canRateLandmark(landmark) || landmarksStore.loading
+                      "
                     >
                       ★
                     </button>
                   </div>
+                  <span
+                    v-if="!canRateLandmark(landmark)"
+                    class="landmark-card__admin-notice"
+                  >
+                    {{ $t('admin.cannotRate') }}
+                  </span>
                 </div>
               </div>
             </div>
@@ -173,11 +189,11 @@
 </template>
 
 <script setup lang="ts">
-import LanguageSwitcher from '../components/LanguageSwitcher.vue';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useLandmarksStore } from '../stores/landmarks';
+import LanguageSwitcher from '../components/LanguageSwitcher.vue';
 import LandmarkMap from '../components/LandmarkMap.vue';
 import LandmarkForm from '../components/LandmarkForm.vue';
 import type { LandmarkFormData, Landmark, LandmarkMarker } from '../types';
@@ -224,6 +240,21 @@ function calculateScore(averageRating: number, visitCount: number): number {
 function getUserRating(landmark: Landmark): number {
   if (!authStore.user) return 0;
   return landmark.userRatings?.[authStore.user.uid] || 0;
+}
+
+function canRateLandmark(landmark: Landmark): boolean {
+  return landmarksStore.canRateLandmark(landmark);
+}
+
+function showOwnerInfo(landmark: Landmark): boolean {
+  return authStore.isAdmin || landmark.createdBy !== authStore.user?.uid;
+}
+
+function getOwnerDisplayName(landmark: Landmark): string {
+  if (landmark.createdBy === authStore.user?.uid) {
+    return 'Your landmark';
+  }
+  return 'Other user';
 }
 
 function onLandmarkClick(landmarkId: string) {
@@ -364,6 +395,18 @@ function viewLandmarkDetails(landmark: Landmark) {
   color: #718096;
   font-size: 0.875rem;
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.general-map__admin-badge {
+  background: #e53e3e;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .general-map__nav {
@@ -554,6 +597,25 @@ function viewLandmarkDetails(landmark: Landmark) {
   font-size: 0.75rem;
   color: #a0aec0;
   margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.landmark-card__visits {
+  font-size: 0.75rem;
+  color: #718096;
+}
+
+.landmark-card__score {
+  font-size: 0.75rem;
+  color: #718096;
+}
+
+.landmark-card__owner {
+  font-size: 0.75rem;
+  color: #718096;
+  font-style: italic;
+  flex-basis: 100%;
 }
 
 .landmark-card__actions {
@@ -567,11 +629,14 @@ function viewLandmarkDetails(landmark: Landmark) {
   justify-content: space-between;
   font-size: 0.875rem;
   color: #4a5568;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .landmark-card__rating-label {
   font-size: 0.75rem;
   color: #718096;
+  flex-basis: 100%;
 }
 
 .landmark-card__stars {
@@ -600,6 +665,17 @@ function viewLandmarkDetails(landmark: Landmark) {
 .landmark-card__star:disabled {
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+.landmark-card__admin-notice {
+  font-size: 0.75rem;
+  color: #718096;
+  font-style: italic;
+  flex-basis: 100%;
+  text-align: center;
+  padding: 0.25rem;
+  background: #f7fafc;
+  border-radius: 4px;
 }
 
 .general-map__loading {
@@ -698,6 +774,19 @@ function viewLandmarkDetails(landmark: Landmark) {
 
   .general-map__filters {
     order: -1;
+    justify-content: center;
+  }
+
+  .general-map__content {
+    padding: 0 10px;
+  }
+
+  .landmark-card__user-rating {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .landmark-card__stars {
     justify-content: center;
   }
 }

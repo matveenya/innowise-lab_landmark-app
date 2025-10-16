@@ -11,16 +11,17 @@ import { auth, db } from '../firebase/config';
 import type { User } from '../types';
 
 export const useAuthStore = defineStore('auth', {
-  state: () => {
-    return {
-      user: null as User | null,
-      loading: false,
-      error: null as string | null,
-    };
-  },
+  state: () => ({
+    user: null as User | null,
+    loading: false,
+    error: null as string | null,
+  }),
+
   getters: {
     isAuthenticated: (state) => !!state.user,
+    isAdmin: (state) => state.user?.role === 'admin',
   },
+
   actions: {
     async initialize() {
       return new Promise((resolve) => {
@@ -28,10 +29,12 @@ export const useAuthStore = defineStore('auth', {
           if (firebaseUser) {
             const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
             if (userDoc.exists()) {
+              const userData = userDoc.data();
               this.user = {
                 uid: firebaseUser.uid,
                 email: firebaseUser.email!,
-                displayName: userDoc.data().displayName,
+                displayName: userData.displayName,
+                role: userData.role || 'user',
               };
             }
           } else {
@@ -56,6 +59,7 @@ export const useAuthStore = defineStore('auth', {
         await setDoc(doc(db, 'users', userCredential.user.uid), {
           email,
           displayName,
+          role: 'user',
           createdAt: new Date(),
         });
 
@@ -63,6 +67,7 @@ export const useAuthStore = defineStore('auth', {
           uid: userCredential.user.uid,
           email,
           displayName,
+          role: 'user',
         };
 
         return true;
@@ -92,10 +97,12 @@ export const useAuthStore = defineStore('auth', {
 
         const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
         if (userDoc.exists()) {
+          const userData = userDoc.data();
           this.user = {
             uid: userCredential.user.uid,
             email: userCredential.user.email!,
-            displayName: userDoc.data().displayName,
+            displayName: userData.displayName,
+            role: userData.role || 'user',
           };
         }
         return true;
