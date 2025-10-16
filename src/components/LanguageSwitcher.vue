@@ -87,7 +87,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: white;
+  background-color: #fff;
   border: 2px solid #e2e8f0;
   border-radius: 6px;
   cursor: pointer;
@@ -120,7 +120,7 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   margin-top: 0.5rem;
-  background: white;
+  background-color: #fff;
   border: 2px solid #e2e8f0;
   border-radius: 6px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -142,11 +142,11 @@ onUnmounted(() => {
 }
 
 .language-switcher__option:hover {
-  background: #f7fafc;
+  background-color: #f7fafc;
 }
 
 .language-switcher__option_active {
-  background: #f0fff4;
+  background-color: #f0fff4;
   color: #48bb78;
 }
 

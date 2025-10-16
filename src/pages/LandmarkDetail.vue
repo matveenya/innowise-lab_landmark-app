@@ -418,7 +418,7 @@ function prevPhoto() {
 }
 
 .landmark-detail__back-btn {
-  background: #e2e8f0;
+  background-color: #e2e8f0;
   color: #4a5568;
   border: none;
   padding: 0.5rem 1rem;
@@ -429,7 +429,7 @@ function prevPhoto() {
 }
 
 .landmark-detail__back-btn:hover {
-  background: #cbd5e0;
+  background-color: #cbd5e0;
 }
 
 .landmark-detail__title {
@@ -452,8 +452,8 @@ function prevPhoto() {
 }
 
 .landmark-detail__edit-btn {
-  background: #48bb78;
-  color: white;
+  background-color: #48bb78;
+  color: #fff;
   border: none;
   padding: 0.5rem 1.5rem;
   border-radius: 6px;
@@ -463,17 +463,17 @@ function prevPhoto() {
 }
 
 .landmark-detail__edit-btn:hover:not(:disabled) {
-  background: #38a169;
+  background-color: #38a169;
 }
 
 .landmark-detail__edit-btn:disabled {
-  background: #a0aec0;
+  background-color: #a0aec0;
   cursor: not-allowed;
 }
 
 .landmark-detail__delete-btn {
-  background: #e53e3e;
-  color: white;
+  background-color: #e53e3e;
+  color: #fff;
   border: none;
   padding: 0.5rem 1.5rem;
   border-radius: 6px;
@@ -483,11 +483,11 @@ function prevPhoto() {
 }
 
 .landmark-detail__delete-btn:hover:not(:disabled) {
-  background: #c53030;
+  background-color: #c53030;
 }
 
 .landmark-detail__delete-btn:disabled {
-  background: #a0aec0;
+  background-color: #a0aec0;
   cursor: not-allowed;
 }
 
@@ -507,8 +507,8 @@ function prevPhoto() {
 .landmark-detail__back-to-map {
   margin-top: 1rem;
   padding: 0.75rem 1.5rem;
-  background: #48bb78;
-  color: white;
+  background-color: #48bb78;
+  color: #fff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -531,7 +531,7 @@ function prevPhoto() {
 }
 
 .landmark-detail__section {
-  background: white;
+  background-color: #fff;
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -570,7 +570,7 @@ function prevPhoto() {
 }
 
 .landmark-detail__rating-section {
-  background: white;
+  background-color: #fff;
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -651,7 +651,7 @@ function prevPhoto() {
   font-style: italic;
   text-align: center;
   padding: 1rem;
-  background: #f7fafc;
+  background-color: #f7fafc;
   border-radius: 4px;
   margin: 0;
 }
@@ -681,7 +681,7 @@ function prevPhoto() {
 }
 
 .landmark-detail__admin-info {
-  background: #f7fafc;
+  background-color: #f7fafc;
   padding: 1rem;
   border-radius: 6px;
   border-left: 4px solid #e53e3e;
@@ -703,7 +703,7 @@ function prevPhoto() {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.9);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -725,7 +725,7 @@ function prevPhoto() {
   right: 0;
   background: none;
   border: none;
-  color: white;
+  color: #fff;
   font-size: 2rem;
   cursor: pointer;
   width: 40px;
@@ -740,9 +740,9 @@ function prevPhoto() {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.2);
   border: none;
-  color: white;
+  color: #fff;
   font-size: 2rem;
   cursor: pointer;
   width: 50px;
@@ -756,7 +756,7 @@ function prevPhoto() {
 }
 
 .landmark-detail__photo-nav:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .landmark-detail__photo-nav_prev {
@@ -778,7 +778,7 @@ function prevPhoto() {
   bottom: -40px;
   left: 50%;
   transform: translateX(-50%);
-  color: white;
+  color: #fff;
   font-size: 1rem;
 }
 

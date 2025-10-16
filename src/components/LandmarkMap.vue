@@ -294,7 +294,7 @@ watch(
   position: absolute;
   top: 10px;
   right: 10px;
-  background: white;
+  background-color: #fff;
   padding: 5px 10px;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -327,7 +327,7 @@ watch(
 
 :deep(.marker-cluster-small div) {
   background-color: rgba(110, 204, 57, 0.6);
-  color: white;
+  color: #fff;
 }
 
 :deep(.marker-cluster-medium) {
@@ -336,7 +336,7 @@ watch(
 
 :deep(.marker-cluster-medium div) {
   background-color: rgba(240, 194, 12, 0.6);
-  color: white;
+  color: #fff;
 }
 
 :deep(.marker-cluster-large) {
@@ -345,6 +345,6 @@ watch(
 
 :deep(.marker-cluster-large div) {
   background-color: rgba(241, 128, 23, 0.6);
-  color: white;
+  color: #fff;
 }
 </style>

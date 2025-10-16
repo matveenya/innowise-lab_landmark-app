@@ -31,8 +31,8 @@ import { RouterView } from 'vue-router';
 }
 
 .landmark-popup button {
-  background: #48bb78;
-  color: white;
+  background-color: #48bb78;
+  color: #fff;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -42,6 +42,6 @@ import { RouterView } from 'vue-router';
 }
 
 .landmark-popup button:hover {
-  background: #38a169;
+  background-color: #38a169;
 }
 </style>

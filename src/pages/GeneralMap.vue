@@ -401,8 +401,8 @@ function viewLandmarkDetails(landmark: Landmark) {
 }
 
 .general-map__admin-badge {
-  background: #e53e3e;
-  color: white;
+  background-color: #e53e3e;
+  color: #fff;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   font-size: 0.75rem;
@@ -499,7 +499,7 @@ function viewLandmarkDetails(landmark: Landmark) {
 }
 
 .general-map__sidebar {
-  background: white;
+  background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -510,7 +510,7 @@ function viewLandmarkDetails(landmark: Landmark) {
 .general-map__sidebar-header {
   padding: 1.5rem;
   border-bottom: 1px solid #e2e8f0;
-  background: #f8fafc;
+  background-color: #f8fafc;
 }
 
 .general-map__sidebar-title {
@@ -533,7 +533,7 @@ function viewLandmarkDetails(landmark: Landmark) {
 }
 
 .landmark-card {
-  background: #fff;
+  background-color: #fff;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
   padding: 1rem;
@@ -551,7 +551,7 @@ function viewLandmarkDetails(landmark: Landmark) {
 
 .landmark-card_active {
   border-color: #48bb78;
-  background: #f0fff4;
+  background-color: #f0fff4;
 }
 
 .landmark-card__header {
@@ -575,8 +575,8 @@ function viewLandmarkDetails(landmark: Landmark) {
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  background: #48bb78;
-  color: white;
+  background-color: #48bb78;
+  color: #fff;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   font-size: 0.875rem;
@@ -674,7 +674,7 @@ function viewLandmarkDetails(landmark: Landmark) {
   flex-basis: 100%;
   text-align: center;
   padding: 0.25rem;
-  background: #f7fafc;
+  background-color: #f7fafc;
   border-radius: 4px;
 }
 
@@ -688,7 +688,7 @@ function viewLandmarkDetails(landmark: Landmark) {
 .general-map__load-more {
   width: 100%;
   padding: 0.75rem;
-  background: #edf2f7;
+  background-color: #edf2f7;
   color: #4a5568;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
@@ -699,7 +699,7 @@ function viewLandmarkDetails(landmark: Landmark) {
 }
 
 .general-map__load-more:hover {
-  background: #e2e8f0;
+  background-color: #e2e8f0;
 }
 
 .general-map__empty {
@@ -711,8 +711,8 @@ function viewLandmarkDetails(landmark: Landmark) {
 .general-map__empty-btn {
   margin-top: 1rem;
   padding: 0.5rem 1rem;
-  background: #48bb78;
-  color: white;
+  background-color: #48bb78;
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -724,7 +724,7 @@ function viewLandmarkDetails(landmark: Landmark) {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -733,7 +733,7 @@ function viewLandmarkDetails(landmark: Landmark) {
 }
 
 .general-map__modal-content {
-  background: white;
+  background-color: #fff;
   border-radius: 12px;
   max-width: 800px;
   width: 100%;

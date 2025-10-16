@@ -376,7 +376,7 @@ onUnmounted(() => {
 }
 
 .landmark-form__form {
-  background: white;
+  background-color: #fff;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -500,8 +500,8 @@ onUnmounted(() => {
 }
 
 .landmark-form__browse-btn {
-  background: #48bb78;
-  color: white;
+  background-color: #48bb78;
+  color: #fff;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -511,7 +511,7 @@ onUnmounted(() => {
 }
 
 .landmark-form__browse-btn:hover {
-  background: #38a169;
+  background-color: #38a169;
 }
 
 .landmark-form__previews {
@@ -536,8 +536,8 @@ onUnmounted(() => {
   position: absolute;
   top: 5px;
   left: 5px;
-  background: #48bb78;
-  color: white;
+  background-color: #48bb78;
+  color: #fff;
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.75rem;
@@ -548,8 +548,8 @@ onUnmounted(() => {
   position: absolute;
   top: -8px;
   right: -8px;
-  background: #e53e3e;
-  color: white;
+  background-color: #e53e3e;
+  color: #fff;
   border: none;
   border-radius: 50%;
   width: 24px;
@@ -598,25 +598,25 @@ onUnmounted(() => {
 }
 
 .landmark-form__btn_primary {
-  background: #48bb78;
-  color: white;
+  background-color: #48bb78;
+  color: #fff;
 }
 
 .landmark-form__btn_primary:hover:not(:disabled) {
-  background: #38a169;
+  background-color: #38a169;
 }
 
 .landmark-form__btn_primary:disabled {
-  background: #a0aec0;
+  background-color: #a0aec0;
   cursor: not-allowed;
 }
 
 .landmark-form__btn_secondary {
-  background: #e2e8f0;
+  background-color: #e2e8f0;
   color: #4a5568;
 }
 
 .landmark-form__btn_secondary:hover {
-  background: #cbd5e0;
+  background-color: #cbd5e0;
 }
 </style>
