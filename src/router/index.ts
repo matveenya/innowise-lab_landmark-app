@@ -37,11 +37,11 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory('/innowise-lab_landmark-app/'),
   routes,
 });
 
-router.beforeEach(async (to, _, next) => {
+router.beforeEach(async (to, _from, next) => {
   const authStore = useAuthStore();
 
   if (!authStore.user) {
