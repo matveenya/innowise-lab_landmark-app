@@ -4,13 +4,7 @@
     <template v-if="type === 'textarea'">
       <textarea
         :id="id"
-        :value="modelValue"
-        @input="
-          $emit(
-            'update:modelValue',
-            ($event.target as HTMLTextAreaElement)?.value || ''
-          )
-        "
+        v-model="localValue"
         required
         class="landmark-form__textarea"
         :placeholder="placeholder"
@@ -20,13 +14,7 @@
     <template v-else>
       <input
         :id="id"
-        :value="modelValue"
-        @input="
-          $emit(
-            'update:modelValue',
-            ($event.target as HTMLInputElement)?.value || ''
-          )
-        "
+        v-model="localValue"
         :type="type"
         required
         class="landmark-form__input"
@@ -37,6 +25,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+
 interface Props {
   id: string;
   label: string;
@@ -45,7 +35,7 @@ interface Props {
   type?: 'text' | 'textarea';
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   type: 'text',
 });
 
@@ -53,7 +43,14 @@ interface Emits {
   (e: 'update:modelValue', value: string): void;
 }
 
-defineEmits<Emits>();
+const emit = defineEmits<Emits>();
+
+const localValue = computed({
+  get: () => props.modelValue,
+  set: (newValue: string) => {
+    emit('update:modelValue', newValue);
+  },
+});
 </script>
 
 <style scoped>
