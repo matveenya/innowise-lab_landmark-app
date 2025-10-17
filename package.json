@@ -11,8 +11,10 @@
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write src/",
     "prepare": "husky && husky install",
-    "lint:staged": "lint-staged"
+    "lint:staged": "lint-staged",
+    "deploy": "npm run build && gh-pages -d dist"
   },
+  "homepage": "https://github.com/matveenya/innowise-lab_landmark-app",
   "lint-staged": {
     "src/**/*.{js,ts,vue}": [
       "eslint --fix --cache",
