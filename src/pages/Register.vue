@@ -131,8 +131,8 @@ function validationForm(): boolean {
   if (!form.password) {
     errors.password = 'Password is required';
     isValid = false;
-  } else if (form.password.length < 5) {
-    errors.password = 'Password must be more than 5 symbols';
+  } else if (form.password.length < 6) {
+    errors.password = 'Password must be at least 6 symbols';
     isValid = false;
   }
 

@@ -16,12 +16,10 @@ export const useAuthStore = defineStore('auth', {
     loading: false,
     error: null as string | null,
   }),
-
   getters: {
     isAuthenticated: (state) => !!state.user,
     isAdmin: (state) => state.user?.role === 'admin',
   },
-
   actions: {
     async initialize() {
       return new Promise((resolve) => {
@@ -44,7 +42,6 @@ export const useAuthStore = defineStore('auth', {
         });
       });
     },
-
     async register(email: string, password: string, displayName: string) {
       this.loading = true;
       this.error = null;
@@ -83,7 +80,6 @@ export const useAuthStore = defineStore('auth', {
         this.loading = false;
       }
     },
-
     async login(email: string, password: string) {
       this.loading = true;
       this.error = null;
@@ -118,7 +114,6 @@ export const useAuthStore = defineStore('auth', {
         this.loading = false;
       }
     },
-
     async logout() {
       try {
         await signOut(auth);
@@ -132,7 +127,7 @@ export const useAuthStore = defineStore('auth', {
       const errorMessages: { [key: string]: string } = {
         'auth/email-already-in-use': 'This email is already registered.',
         'auth/invalid-email': 'Please enter a valid email address.',
-        'auth/weak-password': 'Password should be at least 5 symbols',
+        'auth/weak-password': 'Password should be at least 6 symbols',
         'auth/user-not-found': 'No account found with this email.',
         'auth/wrong-password': 'Incorrect password.',
         'auth/too-many-requests': 'Too many attempts. Please try again later.',
@@ -140,7 +135,6 @@ export const useAuthStore = defineStore('auth', {
 
       return errorMessages[errorCode] || 'An error occurred. Please try again.';
     },
-
     clearError() {
       this.error = null;
     },
