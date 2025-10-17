@@ -37,7 +37,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory('/innowise-lab_landmark-app/'),
+  history: createWebHistory(),
   routes,
 });
 
