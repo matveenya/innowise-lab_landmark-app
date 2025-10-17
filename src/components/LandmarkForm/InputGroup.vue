@@ -25,17 +25,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+const localValue = defineModel<string>();
 
 interface Props {
   id: string;
   label: string;
   placeholder: string;
-  modelValue: string;
   type?: 'text' | 'textarea';
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   type: 'text',
 });
 
@@ -43,14 +42,7 @@ interface Emits {
   (e: 'update:modelValue', value: string): void;
 }
 
-const emit = defineEmits<Emits>();
-
-const localValue = computed({
-  get: () => props.modelValue,
-  set: (newValue: string) => {
-    emit('update:modelValue', newValue);
-  },
-});
+defineEmits<Emits>();
 </script>
 
 <style scoped>

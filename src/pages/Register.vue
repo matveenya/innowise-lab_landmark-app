@@ -7,89 +7,57 @@
             <h1 class="form__title">Create Account</h1>
           </header>
 
-          <div class="form__group display-name">
-            <label for="displayName" class="form__label display-name__label"
-              >Display Name</label
-            >
-            <input
-              id="dispalyName"
-              v-model="form.displayName"
-              type="text"
-              required
-              class="form__input display-name__input"
-              :class="{ form__input_error: errors.displayName }"
-              placeholder="Enter your display name"
-            />
-            <span v-if="errors.displayName" class="form__error">{{
-              errors.displayName
-            }}</span>
-          </div>
+          <FormInput
+            id="displayName"
+            label="Display Name"
+            type="text"
+            placeholder="Enter your display name"
+            v-model="form.displayName"
+            :required="true"
+            :error-message="errors.displayName"
+            container-class="display-name"
+          />
 
-          <div class="form__group email">
-            <label for="email" class="form__label email__label">Email</label>
-            <input
-              id="email"
-              v-model="form.email"
-              type="email"
-              required
-              class="form__input email__input"
-              :class="{ form__input_error: errors.email }"
-              placeholder="Enter your email"
-            />
-            <span v-if="errors.email" class="form__error">{{
-              errors.email
-            }}</span>
-          </div>
+          <FormInput
+            id="email"
+            label="Email"
+            type="email"
+            placeholder="Enter your email"
+            v-model="form.email"
+            :required="true"
+            :error-message="errors.email"
+            container-class="email"
+          />
 
-          <div class="form__group password">
-            <label for="password" class="form__label password__label"
-              >Password</label
-            >
-            <input
-              id="password"
-              v-model="form.password"
-              type="password"
-              required
-              class="form__input password__input"
-              :class="{ form__input_error: errors.password }"
-              placeholder="Enter your password"
-            />
-            <span v-if="errors.password" class="form__error">{{
-              errors.password
-            }}</span>
-          </div>
+          <FormInput
+            id="password"
+            label="Password"
+            type="password"
+            placeholder="Enter your password"
+            v-model="form.password"
+            :required="true"
+            :error-message="errors.password"
+            container-class="password"
+          />
 
-          <div class="form__group confirm-password">
-            <label
-              for="confirmPassword"
-              class="form__label confirm-password__label"
-              >Confirm Password</label
-            >
-            <input
-              id="confirmPassword"
-              v-model="form.confirmPassword"
-              type="password"
-              required
-              class="form__input confrim-password__input"
-              :class="{ form__input_error: errors.confirmPassword }"
-              placeholder="Confirm your password"
-            />
-            <span v-if="errors.confirmPassword" class="form__error">{{
-              errors.confirmPassword
-            }}</span>
-          </div>
+          <FormInput
+            id="confirmPassword"
+            label="Confirm Password"
+            type="password"
+            placeholder="Confirm your password"
+            v-model="form.confirmPassword"
+            :required="true"
+            :error-message="errors.confirmPassword"
+            container-class="confirm-password"
+          />
 
           <div class="form__actions">
-            <button
-              type="submit"
+            <FormButton
+              button-text="Create Account"
+              loading-text="Creating Account..."
+              :loading="loading"
               :disabled="loading"
-              class="form__submit"
-              :class="{ form__submit_loading: loading }"
-            >
-              <span class="form__submit-text">
-                {{ loading ? 'Creating Account...' : 'Create Account' }}
-              </span>
-            </button>
+            />
           </div>
 
           <footer class="form__footer">
@@ -105,12 +73,12 @@
     </div>
   </main>
 </template>
-
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { RouterLink } from 'vue-router';
-import { useRouter } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import FormInput from '../components/UI/FormInput.vue';
+import FormButton from '../components/UI/FormButton.vue';
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -164,7 +132,7 @@ function validationForm(): boolean {
     errors.password = 'Password is required';
     isValid = false;
   } else if (form.password.length < 5) {
-    errors.password = 'Password must be more  than 5 symbols';
+    errors.password = 'Password must be more than 5 symbols';
     isValid = false;
   }
 
@@ -197,7 +165,6 @@ async function handleRegister() {
   loading.value = false;
 }
 </script>
-
 <style scoped>
 .register {
   min-height: 100vh;
@@ -230,74 +197,8 @@ async function handleRegister() {
   font-weight: 600;
 }
 
-.form__group {
-  margin-bottom: 1.5rem;
-}
-
-.form__label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #4a5568;
-  font-weight: 500;
-}
-
-.form__input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: all 0.3s;
-  background-color: #f7fafc;
-}
-
-.form__input:focus {
-  outline: none;
-  border-color: #48bb78;
-  background-color: #fff;
-  box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
-}
-
-.form__input_error {
-  border-color: #e53e3e;
-  background-color: #fed7d7;
-}
-
-.form__error {
-  color: #e53e3e;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-  display: block;
-}
-
 .form__actions {
   margin: 2rem 0 1rem;
-}
-
-.form__submit {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #48bb78;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.form__submit:hover:not(:disabled) {
-  background-image: #38a169;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
-}
-
-.form__submit:disabled {
-  background-color: #a0aec0;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
 .form__footer {
