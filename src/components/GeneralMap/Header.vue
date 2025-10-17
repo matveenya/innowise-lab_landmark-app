@@ -16,8 +16,8 @@
           <label class="general-map__filter-label">
             <input
               type="checkbox"
-              :checked="showOnlyUserLandmarks"
-              @change="handleChange"
+              v-model="showOnlyUserLandmarksModel"
+              @change="$emit('filter-change')"
               class="general-map__checkbox"
             />
             {{ $t('landmark.showOnlyMyLandmarks') }}
@@ -39,33 +39,23 @@ import { computed } from 'vue';
 import { useAuthStore } from '../../stores/auth';
 import LanguageSwitcher from '../LanguageSwitcher.vue';
 
-interface Props {
-  showOnlyUserLandmarks: boolean;
-}
-
-const props = defineProps<Props>();
-console.log(props);
+const showOnlyUserLandmarksModel = defineModel<boolean>(
+  'showOnlyUserLandmarks'
+);
 
 interface Emits {
-  (e: 'update:showOnlyUserLandmarks', value: boolean): void;
   (e: 'add-landmark'): void;
   (e: 'logout'): void;
   (e: 'filter-change'): void;
 }
 
-const emit = defineEmits<Emits>();
+defineEmits<Emits>();
 
 const authStore = useAuthStore();
 
 const userDisplayName = computed(() => {
   return authStore.user?.displayName || authStore.user?.email;
 });
-
-function handleChange(event: Event) {
-  const isChecked = (event.target as HTMLInputElement).checked;
-  emit('update:showOnlyUserLandmarks', isChecked);
-  emit('filter-change');
-}
 </script>
 
 <style scoped>

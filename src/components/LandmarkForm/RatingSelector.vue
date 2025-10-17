@@ -10,29 +10,19 @@
         type="button"
         class="landmark-form__star"
         :class="{
-          'landmark-form__star_active': star <= modelValue,
+          'landmark-form__star_active': star <= ratingModel,
         }"
-        @click="$emit('update:modelValue', star)"
+        @click="ratingModel = star"
       >
         ★
       </button>
     </div>
-    <span class="landmark-form__rating-text"> {{ modelValue }}/5 </span>
+    <span class="landmark-form__rating-text"> {{ ratingModel }}/5 </span>
   </div>
 </template>
 
 <script setup lang="ts">
-interface Props {
-  modelValue: number;
-}
-
-defineProps<Props>();
-
-interface Emits {
-  (e: 'update:modelValue', rating: number): void;
-}
-
-defineEmits<Emits>();
+const ratingModel = defineModel<number>({ required: true });
 </script>
 
 <style scoped>

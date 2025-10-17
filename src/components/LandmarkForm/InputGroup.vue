@@ -37,12 +37,6 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   type: 'text',
 });
-
-interface Emits {
-  (e: 'update:modelValue', value: string): void;
-}
-
-defineEmits<Emits>();
 </script>
 
 <style scoped>
